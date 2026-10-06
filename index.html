@@ -1,1 +1,221 @@
+<!DOCTYPE html>
+<!-- Declara o tipo de documento como HTML5 -->
+<html lang="pt-BR">
+<!-- Define idioma da página como português do Brasil (ajuda leitores de tela e SEO) -->
 
+<head>
+  <!-- Metadados da página -->
+
+  <!-- Codificação de caracteres UTF-8 (acentos e caracteres especiais) -->
+  <meta charset="UTF-8" />
+
+  <!-- Viewport: torna a página responsiva em dispositivos móveis -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Descrição para SEO e compartilhamento -->
+  <meta name="description" content="CrecheNow - Comunicação segura entre creches e responsáveis." />
+
+  <!-- Cor da barra de status no celular (combina com o tema) -->
+  <meta name="theme-color" content="#2a66b4" />
+
+  <!-- Título exibido na aba do navegador -->
+  <title>CrecheNow - Login</title>
+
+  <!-- Link para o manifest do PWA (permite instalação) -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Ícone da aba (favicon) -->
+  <link rel="icon" type="image/png" href="/assets/img/icons/icon-192x192.png" />
+
+  <!-- Ícone para dispositivos Apple -->
+  <link rel="apple-touch-icon" href="/assets/img/icons/icon-192x192.png" />
+
+  <!-- Bootstrap CSS via CDN (framework de estilos) -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- CSS principal do projeto -->
+  <link rel="stylesheet" href="/assets/css/main.css" />
+
+  <!-- CSS de componentes específicos (carrossel, modais, etc) -->
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+
+<body>
+  <!-- Conteúdo principal da página de login -->
+
+  <!-- Container que ocupa toda a altura da tela e centraliza o conteúdo -->
+  <main class="container-fluid vh-100 d-flex align-items-center">
+    <div class="row w-100 g-4 align-items-center">
+
+      <!-- ======================================================
+           LADO ESQUERDO: Branding e benefícios (oculto em mobile)
+           ====================================================== -->
+      <section class="col-lg-6 d-none d-lg-flex flex-column justify-content-center px-5">
+        <!-- Título principal com nome do sistema -->
+        <h1 class="display-4 fw-bold text-primary mb-3">
+          CRECHENOW
+        </h1>
+
+        <!-- Subtítulo explicativo -->
+        <p class="lead text-secondary mb-4">
+          Conecte-se mais rápido com seu filho
+        </p>
+
+        <!-- Lista de benefícios do sistema -->
+        <ul class="list-unstyled">
+          <!-- Benefício 1: Notificações -->
+          <li class="mb-3 d-flex align-items-start">
+            <div>
+              <strong>Notificações Instantâneas</strong>
+              <p class="mb-0 text-secondary">
+                Saiba sobre atividades, eventos e alertas em tempo real.
+              </p>
+            </div>
+          </li>
+
+          <!-- Benefício 2: Confiabilidade -->
+          <li class="mb-3 d-flex align-items-start">
+            <div>
+              <strong>Informações Confiáveis</strong>
+              <p class="mb-0 text-secondary">
+                Sem bilhetes perdidos ou ligações esquecidas.
+              </p>
+            </div>
+          </li>
+
+          <!-- Benefício 3: LGPD -->
+          <li class="mb-3 d-flex align-items-start">
+            <div>
+              <strong>Conforme a LGPD</strong>
+              <p class="mb-0 text-secondary">
+                Dados protegidos, coleta mínima e uso exclusivo para comunicação.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ======================================================
+           LADO DIREITO: Formulário de login
+           ====================================================== -->
+      <section class="col-lg-6 col-12">
+        <!-- Card com sombra que contém o formulário -->
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-4 p-md-5">
+            <!-- Título do formulário -->
+            <h2 class="h3 mb-1">Acesse sua conta</h2>
+            <p class="text-muted mb-4">Entre com seu e-mail e senha</p>
+
+            <!-- Formulário de login (novalidate desativa validação nativa para usar Bootstrap) -->
+            <form id="loginForm" novalidate>
+              <!-- Campo de e-mail -->
+              <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  placeholder="seu@email.com"
+                  required
+                />
+                <!-- Mensagem de erro exibida quando o e-mail é inválido -->
+                <div class="invalid-feedback">Insira um e-mail válido.</div>
+              </div>
+
+              <!-- Campo de senha -->
+              <div class="mb-3">
+                <label for="senha" class="form-label">Senha</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="senha"
+                  placeholder="••••••"
+                  minlength="6"
+                  required
+                />
+                <!-- Mensagem de erro para senha curta -->
+                <div class="invalid-feedback">Senha deve ter no mínimo 6 caracteres.</div>
+              </div>
+
+              <!-- Checkbox de consentimento LGPD -->
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="lgpdConsent" required />
+                <label class="form-check-label small" for="lgpdConsent">
+                  Li e concordo com a
+                  <!-- Link que abre o modal de política de privacidade -->
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#lgpdModal">
+                    Política de Privacidade
+                  </a>
+                  e autorizo o uso dos dados para comunicação institucional.
+                </label>
+              </div>
+
+              <!-- Botão de submit do formulário -->
+              <button type="submit" class="btn btn-primary w-100 mb-3">Entrar</button>
+
+              <!-- Link para acesso de demonstração (preenche campos automaticamente) -->
+              <div class="text-center">
+                <a href="#" id="demoAccess" class="text-decoration-none small">
+                  Acessar demonstração
+                </a>
+              </div>
+
+              <!-- Aviso de que o acesso é fornecido pela creche -->
+              <p class="text-center text-muted small mt-3 mb-0">
+                Não tem conta? O acesso é fornecido pela creche.
+              </p>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ======================================================
+       MODAL: Política de Privacidade (LGPD)
+       ====================================================== -->
+  <div
+    class="modal fade"
+    id="lgpdModal"
+    tabindex="-1"
+    aria-labelledby="lgpdModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <!-- Cabeçalho do modal -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="lgpdModalLabel">Política de Privacidade (LGPD)</h5>
+          <!-- Botão de fechar (X) -->
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <!-- Corpo do modal com o texto da política -->
+        <div class="modal-body">
+          <p>Coletamos apenas e-mail, nome do responsável e vínculo institucional.</p>
+          <p>
+            Seus dados são <strong>criptografados em trânsito</strong>, utilizados exclusivamente
+            para notificações pedagógicas/saúde e podem ser excluídos a qualquer momento via
+            contato com a creche.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container onde os toasts (notificações temporárias) serão exibidos -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+  <!-- ======================================================
+       SCRIPTS: Bootstrap e módulos do projeto
+       Ordem importa: storage -> auth -> notifications -> app
+       ====================================================== -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/assets/js/storage.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/notifications.js"></script>
+  <script src="/assets/js/app.js"></script>
+</body>
+</html>
