@@ -47,11 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (res.success) {
         // Redireciona com base no perfil do usuário
         const newSession = CrecheNowStorage.get('session');
-        const roleMap = { 
-          'parent': '/pages/dashboard-parent.html', 
-          'secretary': '/pages/dashboard-staff.html', 
-          'teacher': '/pages/dashboard-teacher.html' 
-        };
+         const roleMap = { 
+           'parent': './pages/dashboard-parent.html', 
+           'secretary': './pages/dashboard-staff.html', 
+           'teacher': './pages/dashboard-teacher.html' 
+         };
         window.location.href = roleMap[newSession.role];
       } else {
         // Exibe erro em um toast
