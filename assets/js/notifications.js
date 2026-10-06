@@ -1,54 +1,42 @@
 /* ============================================================
-   MÓDULO DE NOTIFICAÇÕES E UI - CrecheNow
-   Responsável por: Renderizar dados no DOM, controlar modais,
-   exibir toasts e atualizar badges de notificação.
+   MODULO DE NOTIFICACOES E UI - CrecheNow
+   Sem emojis, caminhos relativos
    ============================================================ */
 
 const CrecheNowNotifications = (() => {
-  
-  // --- FUNÇÕES UTILITÁRIAS DE UI ---
-  
-  // Abre um modal adicionando a classe 'active'
   const openModal = (modalId) => {
     const modal = document.getElementById(modalId);
     if (modal) modal.classList.add('active');
   };
 
-  // Fecha um modal removendo a classe 'active'
   const closeModal = (modalId) => {
     const modal = document.getElementById(modalId);
     if (modal) modal.classList.remove('active');
   };
 
-  // Exibe uma mensagem temporária (toast) no canto da tela
   const showToast = (message, type = 'success') => {
     const container = document.getElementById('toastContainer');
     if (!container) return;
 
     const toastId = 'toast-' + Date.now();
     const bgClass = type === 'danger' ? 'bg-danger text-white' : (type === 'warning' ? 'bg-warning text-dark' : 'bg-success text-white');
-    
+
     const toastHtml = `
-      <div id="${toastId}" class="toast align-items-center ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div id="${toastId}" class="toast align-items-center ${bgClass} border-0" role="alert">
         <div class="d-flex">
           <div class="toast-body">${message}</div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
       </div>
     `;
-    
+
     container.insertAdjacentHTML('beforeend', toastHtml);
     const toastElement = document.getElementById(toastId);
     const bsToast = new bootstrap.Toast(toastElement, { delay: 3000 });
     bsToast.show();
-    
-    // Remove o elemento do DOM após ser escondido
     toastElement.addEventListener('hidden.bs.toast', () => toastElement.remove());
   };
 
-  // --- RENDERIZAÇÃO ESPECÍFICA POR TELA ---
-
-  // Renderiza o carrossel de comunicados (Pais)
   const renderFeed = (filter = 'todos') => {
     const container = document.getElementById('notificationsFeed');
     if (!container) return;
@@ -63,7 +51,6 @@ const CrecheNowNotifications = (() => {
       return;
     }
 
-    // Gera o HTML de cada item do carrossel
     container.innerHTML = notifs.map((n, index) => `
       <div class="carousel-item ${index === 0 ? 'active' : ''}">
         <div class="notify-card ${n.read ? '' : 'unread'}" data-type="${n.type}">
@@ -75,12 +62,11 @@ const CrecheNowNotifications = (() => {
     `).join('');
   };
 
-  // Renderiza a agenda semanal (Pais/Secretaria)
   const renderAgenda = () => {
     const container = document.getElementById('agendaContainer');
     if (!container) return;
     const agenda = CrecheNowStorage.getAgenda();
-    
+
     container.innerHTML = agenda.map(item => `
       <div class="agenda-card d-flex justify-content-between align-items-center">
         <div>
@@ -92,12 +78,11 @@ const CrecheNowNotifications = (() => {
     `).join('');
   };
 
-  // Renderiza o cardápio semanal (Pais/Secretaria)
   const renderCardapio = () => {
     const container = document.getElementById('cardapioContainer');
     if (!container) return;
     const cardapio = CrecheNowStorage.getCardapio();
-    
+
     container.innerHTML = cardapio.map(item => `
       <div class="cardapio-item d-flex justify-content-between align-items-center">
         <div>
@@ -108,7 +93,6 @@ const CrecheNowNotifications = (() => {
     `).join('');
   };
 
-  // Renderiza histórico de comunicados enviados (Secretaria)
   const renderSent = () => {
     const tbody = document.getElementById('sentNotificationsList');
     if (!tbody) return;
@@ -128,7 +112,6 @@ const CrecheNowNotifications = (() => {
     `).join('');
   };
 
-  // Renderiza gestão de alunos (Secretaria)
   const renderStudentManagement = () => {
     const tbody = document.getElementById('studentsList');
     if (!tbody) return;
@@ -145,29 +128,24 @@ const CrecheNowNotifications = (() => {
     `).join('');
   };
 
-  // Renderiza o dashboard do professor (lista de alunos e últimos registros)
   const renderTeacherDashboard = () => {
     const session = CrecheNowStorage.get('session');
     if (!session || session.role !== 'teacher') return;
 
-    // Filtra alunos da turma do professor
     const myStudents = CrecheNowStorage.getStudents().filter(s => s.class === session.class);
-    
-    // Atualiza select do formulário de rotina
+
     const select = document.getElementById('routineStudentSelect');
     if (select) {
-      select.innerHTML = '<option value="">Escolha um aluno...</option>' + 
+      select.innerHTML = '<option value="">Escolha um aluno...</option>' +
         myStudents.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
     }
 
-    // Atualiza select do modal de recado
     const msgSelect = document.getElementById('teacherMsgStudent');
     if (msgSelect) {
-      msgSelect.innerHTML = '<option value="">Escolha um aluno...</option>' + 
+      msgSelect.innerHTML = '<option value="">Escolha um aluno...</option>' +
         myStudents.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
     }
 
-    // Renderiza tabela lateral de alunos
     const tbody = document.getElementById('teacherStudentsList');
     if (tbody) {
       tbody.innerHTML = myStudents.map(s => `
@@ -179,7 +157,6 @@ const CrecheNowNotifications = (() => {
     }
   };
 
-  // Renderiza a caixa de mensagens (Pais)
   const renderInbox = (tab) => {
     const container = document.getElementById('inbox-content');
     if (!container) return;
@@ -188,10 +165,8 @@ const CrecheNowNotifications = (() => {
 
     let filteredMsgs = [];
     if (tab === 'received') {
-      // Mensagens enviadas pela escola/professor para este pai
       filteredMsgs = msgs.filter(m => m.parentEmail === session.email && m.isTeacherMessage);
     } else {
-      // Mensagens enviadas por este pai
       filteredMsgs = msgs.filter(m => m.parentEmail === session.email && !m.isTeacherMessage);
     }
 
@@ -212,7 +187,6 @@ const CrecheNowNotifications = (() => {
     `).join('');
   };
 
-  // Renderiza recados dos pais para a secretaria ver
   const renderParentMessagesForStaff = () => {
     const container = document.getElementById('parentMsgsContent');
     if (!container) return;
@@ -235,14 +209,13 @@ const CrecheNowNotifications = (() => {
     `).join('');
   };
 
-  // Atualiza o badge (bolinha vermelha) de mensagens não lidas
   const updateInboxBadge = () => {
     const session = CrecheNowStorage.get('session');
     if (!session) return;
-    
+
     const msgs = CrecheNowStorage.getMessages();
     let unreadCount = 0;
-    
+
     if (session.role === 'parent') {
       unreadCount = msgs.filter(m => m.parentEmail === session.email && m.isTeacherMessage && !m.read).length;
     } else if (session.role === 'secretary') {
@@ -260,9 +233,7 @@ const CrecheNowNotifications = (() => {
     }
   };
 
-  // Inicializa os listeners de fechamento de modais (clique no X ou fora do modal)
   const initModalHandlers = () => {
-    // Fecha modal ao clicar no botão com data-close-modal
     document.querySelectorAll('[data-close-modal]').forEach(btn => {
       btn.addEventListener('click', () => {
         const modal = btn.closest('.modal-overlay');
@@ -270,7 +241,6 @@ const CrecheNowNotifications = (() => {
       });
     });
 
-    // Fecha modal ao clicar no fundo escuro (overlay)
     document.querySelectorAll('.modal-overlay').forEach(modal => {
       modal.addEventListener('click', (e) => {
         if (e.target === modal) {
@@ -280,7 +250,6 @@ const CrecheNowNotifications = (() => {
     });
   };
 
-  // Simula sincronização em tempo real (recarrega dados periodicamente)
   const initRealTimeSync = () => {
     setInterval(() => {
       if (window.location.pathname.includes('dashboard')) {
@@ -289,24 +258,16 @@ const CrecheNowNotifications = (() => {
         renderCardapio();
         updateInboxBadge();
       }
-    }, 10000); // A cada 10 segundos
+    }, 10000);
   };
 
-  // Exporta as funções públicas
   return {
-    openModal,
-    closeModal,
-    showToast,
-    renderFeed,
-    renderAgenda,
-    renderCardapio,
-    renderSent,
-    renderStudentManagement,
-    renderTeacherDashboard,
-    renderInbox,
+    openModal, closeModal, showToast,
+    renderFeed, renderAgenda, renderCardapio,
+    renderSent, renderStudentManagement,
+    renderTeacherDashboard, renderInbox,
     renderParentMessagesForStaff,
     updateInboxBadge,
-    initModalHandlers,
-    initRealTimeSync
+    initModalHandlers, initRealTimeSync
   };
 })();
