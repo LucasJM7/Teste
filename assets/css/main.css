@@ -1,4 +1,10 @@
+/* ============================================================
+   CSS PRINCIPAL - CrecheNow
+   Visual profissional e polido
+   ============================================================ */
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 :root {
   --bs-font-sans-serif: 'Poppins', system-ui, -apple-system, sans-serif;
   --bs-primary: #2a66b4;
@@ -6,21 +12,45 @@
   --bs-secondary: #1d9caa;
   --bs-success: #37af65;
   --bs-warning: #e19504;
-  --bs-body-bg: #f8f9fa;
+  --bs-danger: #dc3545;
+  --bs-body-bg: #f4f6f9;
   --navbar-height: 56px;
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --card-shadow-hover: 0 4px 16px rgba(0,0,0,0.12);
 }
-*, *::before, *::after { box-sizing: border-box; }
+
+*, *::before, *::after { 
+  box-sizing: border-box; 
+}
+
 body {
   font-family: var(--bs-font-sans-serif);
+  background-color: var(--bs-body-bg);
   overflow: hidden;
   height: 100vh;
   margin: 0;
+  color: #333;
 }
+
+/* ===== NAVBAR ===== */
+.navbar { 
+  height: var(--navbar-height);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
+}
+
+/* ===== LAYOUT PRINCIPAL ===== */
 .dashboard-main {
   height: calc(100vh - var(--navbar-height));
-  padding: 0 1rem 1rem 1rem;
+  padding: 1rem;
   overflow: hidden;
+  background-color: var(--bs-body-bg);
 }
+
 .dashboard-row {
   height: 100%;
   display: flex;
@@ -28,6 +58,7 @@ body {
   gap: 1rem;
   margin: 0;
 }
+
 .side-column, .center-column {
   height: 100%;
   display: flex;
@@ -36,61 +67,239 @@ body {
   padding: 0;
   min-width: 0;
 }
+
 .side-column { flex: 1; }
 .center-column { flex: 2; }
+
+/* ===== CARDS ===== */
 .side-column > .card, .center-column > .card {
   display: flex;
   flex-direction: column;
   border-radius: 0.75rem;
   overflow: hidden;
   margin-bottom: 0;
+  border: 1px solid #e0e0e0;
+  box-shadow: var(--card-shadow);
+  background: white;
+  transition: box-shadow 0.2s ease;
 }
+
+.side-column > .card:hover, .center-column > .card:hover {
+  box-shadow: var(--card-shadow-hover);
+}
+
 .side-column > .card { flex: 1; min-height: 0; }
+
 .side-column .card-body, .center-column .card-body {
   flex: 1;
   overflow-y: auto;
-  padding: 0.75rem;
+  padding: 1rem;
   min-height: 0;
-}
-.card-body::-webkit-scrollbar { width: 6px; }
-.card-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-.agenda-card, .cardapio-item {
-  min-height: 60px;
-  display: flex;
-  align-items: center;
-  padding: 0.75rem !important;
-  margin-bottom: 0.5rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
   background: white;
+}
+
+/* Scrollbar personalizada */
+.card-body::-webkit-scrollbar { width: 6px; }
+.card-body::-webkit-scrollbar-track { background: #f1f1f1; }
+.card-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+.card-body::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+
+/* ===== HEADER DOS CARDS ===== */
+.card-header {
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.card-header.bg-primary { background-color: var(--bs-primary) !important; }
+.card-header.bg-success { background-color: var(--bs-success) !important; }
+.card-header.bg-warning { background-color: var(--bs-warning) !important; }
+.card-header.bg-info { background-color: #17a2b8 !important; }
+.card-header.bg-secondary { background-color: #6c757d !important; }
+
+/* ===== TABELAS ===== */
+.table {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+
+.table th {
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  padding: 0.75rem;
+}
+
+.table td {
+  padding: 0.75rem;
+  vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(42, 102, 180, 0.05);
+}
+
+/* ===== FORMULÁRIOS ===== */
+.form-label {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
   border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border: 1px solid #ced4da;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.agenda-card:hover, .cardapio-item:hover {
-  transform: translateX(4px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.08) !important;
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.2rem rgba(42, 102, 180, 0.15);
 }
-.routine-card-fixed {
-  height: 280px !important;
-  flex-shrink: 0 !important;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+
+.form-control-lg, .form-select-lg {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
 }
-.routine-card-fixed .card-body {
-  flex: 1;
-  overflow-y: auto;
+
+/* ===== SWITCH (TOGGLE) ===== */
+.form-switch {
+  padding-left: 0;
+}
+
+.form-switch .form-check-input {
+  width: 3.5em;
+  height: 1.75em;
+  margin-left: 0;
+  margin-right: 0.75rem;
   cursor: pointer;
-  position: relative;
+  background-color: #dee2e6;
+  border: 1px solid #ced4da;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
-.navbar { height: var(--navbar-height); }
+
+.form-switch .form-check-input:checked {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.form-switch .form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(42, 102, 180, 0.25);
+  border-color: var(--bs-primary);
+}
+
+.form-switch .form-check-label {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ===== BOTÕES ===== */
+.btn {
+  border-radius: 0.5rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+}
+
+.btn-primary:hover {
+  background-color: #235596;
+  border-color: #21508e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(42, 102, 180, 0.3);
+}
+
+.btn-success {
+  --bs-btn-bg: var(--bs-success);
+  --bs-btn-border-color: var(--bs-success);
+}
+
+.btn-success:hover {
+  background-color: #2e9a56;
+  border-color: #2a8f4f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(55, 175, 101, 0.3);
+}
+
+.btn-outline-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(42, 102, 180, 0.2);
+}
+
+.btn-outline-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(55, 175, 101, 0.2);
+}
+
+.btn-outline-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+}
+
+/* Botões de Sim/Não (toggle) */
+.btn-group .btn-outline-success,
+.btn-group .btn-outline-danger {
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn-check:checked + .btn-outline-success {
+  background-color: var(--bs-success);
+  border-color: var(--bs-success);
+  color: white;
+}
+
+.btn-check:checked + .btn-outline-danger {
+  background-color: var(--bs-danger);
+  border-color: var(--bs-danger);
+  color: white;
+}
+
+/* ===== BADGES ===== */
+.badge {
+  font-weight: 500;
+  padding: 0.4em 0.65em;
+  font-size: 0.8rem;
+  border-radius: 0.4rem;
+}
+
+.badge.bg-secondary { background-color: #6c757d !important; }
+.badge.bg-success { background-color: var(--bs-success) !important; }
+.badge.bg-danger { background-color: var(--bs-danger) !important; }
+.badge.bg-primary { background-color: var(--bs-primary) !important; }
+
+/* ===== TOASTS ===== */
 .toast-container { z-index: 1100; }
-.btn-primary { --bs-btn-bg: var(--bs-primary); --bs-btn-border-color: var(--bs-primary); }
-.btn-primary:hover { background-color: #235596; border-color: #21508e; }
-.badge { font-weight: 500; }
-.card { border-radius: 0.75rem; }
+
+.toast {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* ===== RESPONSIVIDADE ===== */
 @media (max-width: 991px) {
   body { overflow: auto; height: auto; }
   .dashboard-main { height: auto; overflow: auto; padding: 1rem; }
   .dashboard-row { flex-wrap: wrap; height: auto; }
-  .side-column, .center-column { height: 400px; margin-bottom: 1rem; flex: 1 1 100% !important; }
+  .side-column, .center-column {
+    height: auto;
+    min-height: 400px;
+    margin-bottom: 1rem;
+    flex: 1 1 100% !important;
+  }
 }
