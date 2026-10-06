@@ -1,11 +1,9 @@
 /* ============================================================
-   MÓDULO DE AUTENTICAÇÃO - CrecheNow
-   Responsável por: Login, validação de credenciais, 
-   gerenciamento de sessão e logout.
+   MODULO DE AUTENTICACAO - CrecheNow
+   Caminhos relativos para GitHub Pages
    ============================================================ */
 
 const CrecheNowAuth = (() => {
-  // Banco de dados simulado de usuários (sem emojis)
   const MOCK_USERS = [
     { email: 'pai@email.com', senha: '123456', name: 'Carlos Silva', role: 'parent', class: null },
     { email: 'mae@email.com', senha: '123456', name: 'Ana Souza', role: 'parent', class: null },
@@ -15,53 +13,44 @@ const CrecheNowAuth = (() => {
     { email: 'secretaria@email.com', senha: '123456', name: 'Secretaria', role: 'secretary', class: null }
   ];
 
-  // Mapeamento de qual página cada perfil deve acessar
-   const ROLE_ROUTES = {
-     parent: './pages/dashboard-parent.html',
-     teacher: './pages/dashboard-teacher.html',
-     secretary: './pages/dashboard-staff.html'
-   };
+  const ROLE_ROUTES = {
+    parent: './pages/dashboard-parent.html',
+    teacher: './pages/dashboard-teacher.html',
+    secretary: './pages/dashboard-staff.html'
+  };
 
-  // Valida formato de e-mail usando expressão regular
   const validarEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  // Busca usuário no array simulado (case-insensitive para o e-mail)
   const buscarUsuario = (email, senha) => {
     return MOCK_USERS.find(u => u.email === email.toLowerCase() && u.senha === senha) || null;
   };
 
   return {
-    // Inicializa o módulo (chamado pelo app.js)
     init: () => {
-      console.log('[Auth] Modulo de autenticacao inicializado.');
+      console.log('[Auth] Modulo inicializado.');
     },
 
-    // Verifica se o usuário tem permissão para estar na página atual
     checkSession: () => {
       const sessao = CrecheNowStorage.get('session');
       const paginaAtual = window.location.pathname;
 
-      // Se estiver na página de login e já tiver sessão válida, redireciona para o dashboard
-      if (paginaAtual.includes('index.html') || paginaAtual === '/') {
+      if (paginaAtual.includes('index.html') || paginaAtual.endsWith('/')) {
         if (sessao && ROLE_ROUTES[sessao.role]) {
           window.location.href = ROLE_ROUTES[sessao.role];
         }
         return;
       }
 
-      // Se estiver em um dashboard e NÃO tiver sessão, expulsa para o login
       if (!sessao && paginaAtual.includes('dashboard')) {
         window.location.href = './index.html';
         return;
       }
 
-      // Se tiver sessão, mas tentar acessar um dashboard de outro perfil, redireciona
       if (sessao && ROLE_ROUTES[sessao.role] && !paginaAtual.includes(ROLE_ROUTES[sessao.role].split('/').pop())) {
         window.location.href = ROLE_ROUTES[sessao.role];
       }
     },
 
-    // Realiza o processo de login
     login: (email, senha, lgpdConsent) => {
       if (!email || !validarEmail(email)) {
         return { success: false, msg: 'E-mail invalido.' };
@@ -78,7 +67,6 @@ const CrecheNowAuth = (() => {
         return { success: false, msg: 'E-mail ou senha incorretos.' };
       }
 
-      // Cria o objeto de sessão
       const sessao = {
         email: usuario.email,
         name: usuario.name,
@@ -87,15 +75,13 @@ const CrecheNowAuth = (() => {
         loginAt: new Date().toISOString()
       };
 
-      // Salva no localStorage
       CrecheNowStorage.set('session', sessao);
       return { success: true, session: sessao };
     },
 
-    // Realiza o logout
-      logout: () => {
-        CrecheNowStorage.set('session', null);
-        window.location.href = './index.html';
-      }
+    logout: () => {
+      CrecheNowStorage.set('session', null);
+      window.location.href = './index.html';
+    }
   };
 })();
