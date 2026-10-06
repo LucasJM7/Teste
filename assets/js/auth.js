@@ -16,11 +16,11 @@ const CrecheNowAuth = (() => {
   ];
 
   // Mapeamento de qual página cada perfil deve acessar
-  const ROLE_ROUTES = {
-    parent: '/pages/dashboard-parent.html',
-    teacher: '/pages/dashboard-teacher.html',
-    secretary: '/pages/dashboard-staff.html'
-  };
+   const ROLE_ROUTES = {
+     parent: './pages/dashboard-parent.html',
+     teacher: './pages/dashboard-teacher.html',
+     secretary: './pages/dashboard-staff.html'
+   };
 
   // Valida formato de e-mail usando expressão regular
   const validarEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -51,7 +51,7 @@ const CrecheNowAuth = (() => {
 
       // Se estiver em um dashboard e NÃO tiver sessão, expulsa para o login
       if (!sessao && paginaAtual.includes('dashboard')) {
-        window.location.href = '/index.html';
+        window.location.href = './index.html';
         return;
       }
 
@@ -93,9 +93,9 @@ const CrecheNowAuth = (() => {
     },
 
     // Realiza o logout
-    logout: () => {
-      CrecheNowStorage.set('session', null); // Remove a sessão
-      window.location.href = '/index.html';  // Redireciona para o login
-    }
+      logout: () => {
+        CrecheNowStorage.set('session', null);
+        window.location.href = './index.html';
+      }
   };
 })();
