@@ -4,247 +4,118 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#2a66b4" />
-
   <title>CrecheNow - Painel do Professor</title>
-
-  <!-- PWA -->
-  <link rel="manifest" href="../config/manifest.json" />
+  <link rel="manifest" href="../manifest.json" />
   <link rel="icon" type="image/png" href="../assets/img/icons/icon-192x192.png" />
-
-  <!-- CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
 </head>
 <body>
-  <!-- ======================================================
-       HEADER: Barra superior
-       ====================================================== -->
   <header class="navbar navbar-expand-lg bg-primary text-white shadow-sm">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold text-white" href="#">
-        CRECHENOW
-      </a>
-
+      <a class="navbar-brand fw-bold text-white" href="#">CRECHENOW</a>
       <div class="d-flex align-items-center gap-3">
-        <!-- Nome do professor e turma (preenchido pelo JS) -->
         <span class="text-white small" id="teacherInfo">Professor</span>
-
-        <!-- Botão de mensagens do professor -->
-        <button class="btn btn-light position-relative" id="openTeacherInboxModalBtn" aria-label="Mensagens do professor">
-          Mensagens
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="teacherInboxBadge">0</span>
-        </button>
-
         <button class="btn btn-outline-light btn-sm" id="logoutBtn">Sair</button>
       </div>
     </div>
   </header>
-
-  <!-- ======================================================
-       MAIN: Conteúdo principal
-       ====================================================== -->
   <main class="dashboard-main">
     <div class="dashboard-row">
-
-      <!-- --------------------------------------------------
-           COLUNA LATERAL: Turma e Últimos Registros
-           -------------------------------------------------- -->
       <aside class="side-column">
-        <!-- Card: Lista de alunos da turma -->
-        <section class="card shadow-sm" aria-labelledby="minhaTurmaTitle">
-          <div class="card-header bg-primary text-white">
-            <h2 class="h6 mb-0" id="minhaTurmaTitle">
-              Minha Turma <span id="teacherClassDisplay"></span>
-            </h2>
-          </div>
+        <section class="card shadow-sm">
+          <div class="card-header bg-primary text-white"><h2 class="h6 mb-0">Minha Turma <span id="teacherClassDisplay"></span></h2></div>
           <div class="card-body p-0">
             <div class="table-responsive">
-              <table class="table table-hover mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th>Nome</th>
-                    <th>Hoje</th>
-                  </tr>
-                </thead>
-                <!-- Lista preenchida pelo JS -->
-                <tbody id="teacherStudentsList">
-                  <tr><td colspan="2" class="text-center text-muted">Carregando...</td></tr>
-                </tbody>
+              <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light"><tr><th>Nome</th><th class="text-center">Status</th></tr></thead>
+                <tbody id="teacherStudentsList"><tr><td colspan="2" class="text-center text-muted p-3">Carregando...</td></tr></tbody>
               </table>
             </div>
           </div>
         </section>
-
-        <!-- Card: Últimos registros de rotina (placeholder) -->
-        <section class="card shadow-sm" aria-labelledby="ultimosRegistrosTitle">
-          <div class="card-header bg-secondary text-white">
-            <h2 class="h6 mb-0" id="ultimosRegistrosTitle">Últimos Registros</h2>
-          </div>
-          <div class="card-body" id="teacherLastRoutines">
-            <p class="text-muted text-center small">Nenhum registro recente.</p>
-          </div>
-        </section>
       </aside>
-
-      <!-- --------------------------------------------------
-           COLUNA CENTRAL: Registro de Rotina Diária
-           -------------------------------------------------- -->
       <section class="center-column">
-        <article class="card shadow-sm" aria-labelledby="rotinaDiariaTitle">
-          <div class="card-header bg-success text-white">
-            <h2 class="h6 mb-0" id="rotinaDiariaTitle">Registro de Rotina Diária</h2>
-          </div>
+        <article class="card shadow-sm">
+          <div class="card-header bg-success text-white"><h2 class="h6 mb-0">Registro de Rotina Diaria</h2></div>
           <div class="card-body">
-            <!-- Formulário de registro diário -->
             <form id="teacherRoutineForm" novalidate>
-              <!-- Seleção do aluno -->
               <div class="mb-3">
-                <label for="routineStudentSelect" class="form-label">Aluno</label>
-                <select class="form-select" id="routineStudentSelect" required>
+                <label for="routineStudentSelect" class="form-label fw-bold">Selecione o Aluno</label>
+                <select class="form-select form-select-lg" id="routineStudentSelect" required>
                   <option value="">Escolha um aluno...</option>
-                  <!-- Opções preenchidas pelo JS -->
                 </select>
               </div>
-
-              <!-- Checkbox de presença -->
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="routineAttendance" checked />
-                <label class="form-check-label" for="routineAttendance">
-                  <strong>Presente hoje</strong>
+              <div class="form-check form-switch mb-4 p-3 bg-light rounded border">
+                <input class="form-check-input" type="checkbox" id="routineAttendance" style="transform: scale(1.2);" />
+                <label class="form-check-label fw-bold text-primary" for="routineAttendance">
+                  Deseja registrar a avaliacao deste aluno hoje?
                 </label>
+                <div class="form-text">Se desmarcado, o dia ficara em estado neutro (sem registro de presenca ou falta).</div>
               </div>
-
-              <!-- Container das perguntas de avaliação (oculto se ausente) -->
-              <div id="routineQuestionsContainer">
-                <h3 class="h6 mb-2">Avaliação do Dia</h3>
-
-                <!-- Pergunta 1: Comportamento -->
-                <div class="mb-2">
-                  <label class="form-label small">Se comportou bem?</label>
-                  <div class="btn-group w-100" role="group">
-                    <input type="radio" class="btn-check" name="q1" id="q1sim" value="sim" checked />
-                    <label class="btn btn-outline-success btn-sm" for="q1sim">Sim</label>
-                    <input type="radio" class="btn-check" name="q1" id="q1nao" value="nao" />
-                    <label class="btn btn-outline-danger btn-sm" for="q1nao">Não</label>
+              <div id="routineQuestionsContainer" style="display: none;">
+                <h3 class="h6 mb-3 text-secondary border-bottom pb-2">Avaliacao do Dia</h3>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label small fw-bold">Se comportou bem?</label>
+                    <div class="btn-group w-100" role="group">
+                      <input type="radio" class="btn-check" name="q1" id="q1sim" value="sim" checked />
+                      <label class="btn btn-outline-success" for="q1sim">Sim</label>
+                      <input type="radio" class="btn-check" name="q1" id="q1nao" value="nao" />
+                      <label class="btn btn-outline-danger" for="q1nao">Nao</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label small fw-bold">Prestou atencao?</label>
+                    <div class="btn-group w-100" role="group">
+                      <input type="radio" class="btn-check" name="q2" id="q2sim" value="sim" checked />
+                      <label class="btn btn-outline-success" for="q2sim">Sim</label>
+                      <input type="radio" class="btn-check" name="q2" id="q2nao" value="nao" />
+                      <label class="btn btn-outline-danger" for="q2nao">Nao</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label small fw-bold">Fez os deveres?</label>
+                    <div class="btn-group w-100" role="group">
+                      <input type="radio" class="btn-check" name="q3" id="q3sim" value="sim" checked />
+                      <label class="btn btn-outline-success" for="q3sim">Sim</label>
+                      <input type="radio" class="btn-check" name="q3" id="q3nao" value="nao" />
+                      <label class="btn btn-outline-danger" for="q3nao">Nao</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label small fw-bold">Se deu bem com colegas?</label>
+                    <div class="btn-group w-100" role="group">
+                      <input type="radio" class="btn-check" name="q4" id="q4sim" value="sim" checked />
+                      <label class="btn btn-outline-success" for="q4sim">Sim</label>
+                      <input type="radio" class="btn-check" name="q4" id="q4nao" value="nao" />
+                      <label class="btn btn-outline-danger" for="q4nao">Nao</label>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label small fw-bold">Comeu toda a comida?</label>
+                    <div class="btn-group w-100" role="group">
+                      <input type="radio" class="btn-check" name="q5" id="q5sim" value="sim" checked />
+                      <label class="btn btn-outline-success" for="q5sim">Sim</label>
+                      <input type="radio" class="btn-check" name="q5" id="q5nao" value="nao" />
+                      <label class="btn btn-outline-danger" for="q5nao">Nao</label>
+                    </div>
                   </div>
                 </div>
-
-                <!-- Pergunta 2: Atenção -->
-                <div class="mb-2">
-                  <label class="form-label small">Prestou atenção?</label>
-                  <div class="btn-group w-100" role="group">
-                    <input type="radio" class="btn-check" name="q2" id="q2sim" value="sim" checked />
-                    <label class="btn btn-outline-success btn-sm" for="q2sim">Sim</label>
-                    <input type="radio" class="btn-check" name="q2" id="q2nao" value="nao" />
-                    <label class="btn btn-outline-danger btn-sm" for="q2nao">Não</label>
-                  </div>
-                </div>
-
-                <!-- Pergunta 3: Deveres -->
-                <div class="mb-2">
-                  <label class="form-label small">Fez os deveres?</label>
-                  <div class="btn-group w-100" role="group">
-                    <input type="radio" class="btn-check" name="q3" id="q3sim" value="sim" checked />
-                    <label class="btn btn-outline-success btn-sm" for="q3sim">Sim</label>
-                    <input type="radio" class="btn-check" name="q3" id="q3nao" value="nao" />
-                    <label class="btn btn-outline-danger btn-sm" for="q3nao">Não</label>
-                  </div>
-                </div>
-
-                <!-- Pergunta 4: Relação com colegas -->
-                <div class="mb-2">
-                  <label class="form-label small">Se deu bem com colegas?</label>
-                  <div class="btn-group w-100" role="group">
-                    <input type="radio" class="btn-check" name="q4" id="q4sim" value="sim" checked />
-                    <label class="btn btn-outline-success btn-sm" for="q4sim">Sim</label>
-                    <input type="radio" class="btn-check" name="q4" id="q4nao" value="nao" />
-                    <label class="btn btn-outline-danger btn-sm" for="q4nao">Não</label>
-                  </div>
-                </div>
-
-                <!-- Pergunta 5: Alimentação -->
-                <div class="mb-2">
-                  <label class="form-label small">Comeu toda a comida?</label>
-                  <div class="btn-group w-100" role="group">
-                    <input type="radio" class="btn-check" name="q5" id="q5sim" value="sim" checked />
-                    <label class="btn btn-outline-success btn-sm" for="q5sim">Sim</label>
-                    <input type="radio" class="btn-check" name="q5" id="q5nao" value="nao" />
-                    <label class="btn btn-outline-danger btn-sm" for="q5nao">Não</label>
-                  </div>
-                </div>
-
-                <!-- Campo de comentário livre -->
-                <div class="mb-3">
-                  <label for="routineComment" class="form-label small">Comentários (Opcional)</label>
-                  <textarea class="form-control" id="routineComment" rows="2"></textarea>
+                <div class="mb-3 mt-4">
+                  <label for="routineComment" class="form-label fw-bold">Comentarios Adicionais (Opcional)</label>
+                  <textarea class="form-control" id="routineComment" rows="3" placeholder="Ex: Hoje ele destacou-se na atividade de artes..."></textarea>
                 </div>
               </div>
-
-              <button type="submit" class="btn btn-success w-100">Salvar Rotina</button>
+              <button type="submit" class="btn btn-success w-100 mt-3 py-2 fw-bold">Salvar Registro</button>
             </form>
           </div>
         </article>
       </section>
     </div>
   </main>
-
-  <!-- ======================================================
-       BOTÃO FLUTUANTE: Enviar recado ao responsável
-       ====================================================== -->
-  <div class="position-fixed bottom-0 end-0 p-3 d-flex flex-column gap-2" style="z-index: 1040;">
-    <button class="btn btn-primary shadow" id="openTeacherMsgModalBtn">
-      Enviar Recado
-    </button>
-  </div>
-
-  <!-- ======================================================
-       MODAL: Enviar Recado ao Responsável
-       ====================================================== -->
-  <div class="modal-overlay" id="teacherMsgModal" role="dialog" aria-modal="true" aria-labelledby="teacherMsgTitle">
-    <div class="modal-box">
-      <button class="modal-close" data-close-modal aria-label="Fechar">×</button>
-      <h3 class="h4 mb-3" id="teacherMsgTitle">Enviar Recado ao Responsável</h3>
-
-      <form id="teacherMsgForm" novalidate>
-        <div class="mb-3">
-          <label for="teacherMsgStudent" class="form-label">Aluno</label>
-          <select class="form-select" id="teacherMsgStudent" required>
-            <option value="">Escolha um aluno...</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="teacherMessage" class="form-label">Mensagem</label>
-          <textarea class="form-control" id="teacherMessage" rows="4" required></textarea>
-          <div class="invalid-feedback">Escreva uma mensagem.</div>
-        </div>
-        <button type="submit" class="btn btn-primary w-100">Enviar Recado</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- ======================================================
-       MODAL: Caixa de Mensagens do Professor
-       ====================================================== -->
-  <div class="modal-overlay" id="teacherInboxModal" role="dialog" aria-modal="true" aria-labelledby="teacherInboxTitle">
-    <div class="modal-box">
-      <button class="modal-close" data-close-modal aria-label="Fechar">×</button>
-      <h3 class="h4 mb-3" id="teacherInboxTitle">Mensagens</h3>
-
-      <ul class="nav nav-tabs mb-3" role="tablist">
-        <li class="nav-item">
-          <button class="nav-link active" data-teacher-inbox-tab="received" type="button">Recebidas</button>
-        </li>
-        <li class="nav-item">
-          <button class="nav-link" data-teacher-inbox-tab="sent" type="button">Enviadas</button>
-        </li>
-      </ul>
-
-      <div id="teacher-inbox-content" class="overflow-auto" style="max-height: 50vh;"></div>
-    </div>
-  </div>
-
   <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/js/storage.js"></script>
   <script src="../assets/js/auth.js"></script>
