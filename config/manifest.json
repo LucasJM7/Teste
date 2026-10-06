@@ -9,10 +9,10 @@
   "description": "Comunicação segura entre creches e responsáveis.",
 
   /* URL inicial que abre quando o usuário toca no ícone */
-  "start_url": "/",
+  "start_url": "/Teste/",
 
   /* Escopo: define em quais URLs o PWA funciona como app */
-  "scope": "/",
+  "scope": "/Teste/",
 
   /* Modo de exibição: standalone remove a barra do navegador */
   "display": "standalone",
