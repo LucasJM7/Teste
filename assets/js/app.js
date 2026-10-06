@@ -1,9 +1,10 @@
 /* ============================================================
-   MODULO DE ORQUESTRACAO - CrecheNow
-   Caminhos relativos para GitHub Pages
+   MÓDULO DE ORQUESTRAÇÃO - CrecheNow
+   Caminhos RELATIVOS para funcionar no GitHub Pages
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Inicializa módulos
   CrecheNowAuth.init();
   CrecheNowAuth.checkSession();
 
@@ -20,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // LOGIN
+  // ===== LOGIN =====
   const loginForm = document.getElementById('loginForm');
   if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (res.success) {
         const newSession = CrecheNowStorage.get('session');
+        // ⚠️ CAMINHOS RELATIVOS
         const roleMap = {
           'parent': './pages/dashboard-parent.html',
           'secretary': './pages/dashboard-staff.html',
@@ -54,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // SECRETARIA
+  // ===== SECRETARIA =====
   const staffForm = document.getElementById('staffForm');
   if (staffForm) {
     const notifyDateInput = document.getElementById('notifyDate');
@@ -126,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     CrecheNowNotifications.openModal('parentMsgsModal');
   });
 
-  // PROFESSOR
+  // ===== PROFESSOR =====
   const teacherRoutineForm = document.getElementById('teacherRoutineForm');
   if (teacherRoutineForm) {
     CrecheNowNotifications.renderTeacherDashboard();
@@ -196,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       teacherMsgForm.reset();
       teacherMsgForm.classList.remove('was-validated');
-      CrecheNowNotifications.showToast('Recado enviado ao responsavel!');
+      CrecheNowNotifications.showToast('Recado enviado ao responsável!');
       CrecheNowNotifications.closeModal('teacherMsgModal');
     });
   }
@@ -205,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     CrecheNowNotifications.openModal('teacherMsgModal');
   });
 
-  // PAIS
+  // ===== PAIS =====
   if (session?.role === 'parent') {
     const student = CrecheNowStorage.getStudents().find(s => s.parentEmail === session.email) || CrecheNowStorage.getStudents()[0];
 
@@ -219,10 +221,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('openInboxModalBtn')?.addEventListener('click', () => {
       CrecheNowNotifications.renderInbox('received');
-
       const notifs = CrecheNowStorage.getNotifications().filter(n => !n.read);
       notifs.forEach(n => CrecheNowStorage.markAsRead(n.id));
-
       CrecheNowNotifications.updateInboxBadge();
       CrecheNowNotifications.openModal('inboxModal');
     });
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     CrecheNowNotifications.updateInboxBadge();
   }
 
-  // GLOBAL
+  // ===== GLOBAL =====
   document.getElementById('logoutBtn')?.addEventListener('click', CrecheNowAuth.logout);
 
   document.querySelectorAll('[data-filter]')?.forEach(btn => {
@@ -275,12 +275,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Service Worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js')
       .then(() => console.log('Service Worker registrado com sucesso.'))
       .catch(err => console.error('Falha ao registrar Service Worker:', err));
   }
 
+  // Renderização inicial
   if (window.location.pathname.includes('dashboard')) {
     CrecheNowNotifications.renderFeed();
     CrecheNowNotifications.renderAgenda();
@@ -289,10 +291,11 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(CrecheNowStorage.processQueue, 60000);
   }
 
+  // Atalhos de teclado
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'l') {
       e.preventDefault();
-      if (confirm('MODO TESTE: Limpar todos os dados salvos e recarregar a pagina?')) {
+      if (confirm('MODO TESTE: Limpar todos os dados salvos e recarregar a página?')) {
         localStorage.clear();
         window.location.reload();
       }
