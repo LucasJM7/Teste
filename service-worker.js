@@ -1,111 +1,87 @@
-/* ============================================================
-   SERVICE WORKER - CrecheNow
-   Responsável por: cache de arquivos, funcionamento offline
-   e recebimento de notificações push.
-   ============================================================ */
+const CACHE_NAME = 'crechenow-v2';
 
-/* Nome do cache: altere para forçar atualização dos arquivos */
-const CACHE_NAME = 'crechenow-v1';
-
-/* Lista de arquivos essenciais (app shell) */
+// Usar caminhos relativos (./) para funcionar em qualquer subdiretório do GitHub Pages
 const STATIC_ASSETS = [
-  '/',                              /* Raiz do site */
-  '/index.html',                    /* Página de login */
-  '/pages/dashboard-parent.html',   /* Painel dos pais */
-  '/pages/dashboard-staff.html',    /* Painel da secretaria */
-  '/pages/dashboard-teacher.html',  /* Painel do professor */
-  '/assets/css/main.css',           /* Estilos principais */
-  '/assets/css/components.css',     /* Componentes visuais */
-  '/assets/js/storage.js',          /* Gerenciamento de dados */
-  '/assets/js/auth.js',             /* Autenticação */
-  '/assets/js/notifications.js',    /* Renderização e UI */
-  '/assets/js/app.js',              /* Orquestração */
-  /* Bootstrap via CDN */
+  './',
+  './index.html',
+  './pages/dashboard-parent.html',
+  './pages/dashboard-staff.html',
+  './pages/dashboard-teacher.html',
+  './assets/css/main.css',
+  './assets/css/components.css',
+  './assets/js/storage.js',
+  './assets/js/auth.js',
+  './assets/js/notifications.js',
+  './assets/js/app.js',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'
 ];
 
-/* ----------------------------------------------------------
-   INSTALAÇÃO: baixa todos os arquivos estáticos para o cache
-   ---------------------------------------------------------- */
-self.addEventListener('install', (event) => {
-  event.waitUntil(
+// Instalação: Precache app shell (baixa os arquivos para funcionar offline)
+self.addEventListener('install', (e) => {
+  e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Cache aberto:', CACHE_NAME);
+      console.log('[SW] Cache aberto e precacheando arquivos');
       return cache.addAll(STATIC_ASSETS);
     })
   );
-  /* Força o novo SW a assumir imediatamente */
-  self.skipWaiting();
+  self.skipWaiting(); // Força a ativação imediata do novo Service Worker
 });
 
-/* ----------------------------------------------------------
-   ATIVAÇÃO: remove caches antigos para liberar espaço
-   ---------------------------------------------------------- */
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
+// Ativação: Limpa caches antigos para evitar conflitos e liberar espaço
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => {
-            console.log('[SW] Removendo cache antigo:', key);
-            return caches.delete(key);
-          })
+        keys.filter((key) => key !== CACHE_NAME).map((key) => {
+          console.log('[SW] Removendo cache antigo:', key);
+          return caches.delete(key);
+        })
       );
     })
   );
-  /* Assume controle das páginas abertas */
-  self.clients.claim();
+  self.clients.claim(); // Assume o controle das páginas abertas imediatamente
 });
 
-/* ----------------------------------------------------------
-   FETCH: decide de onde buscar cada requisição
-   - Estáticos: cache-first (rápido)
-   - API/dados: network-first (sempre atualizado)
-   ---------------------------------------------------------- */
-self.addEventListener('fetch', (event) => {
-  const url = event.request.url;
-
-  /* Se for requisição de API, tenta rede primeiro */
-  if (url.includes('/api/') || url.includes('/data/')) {
-    event.respondWith(
-      fetch(event.request).catch(() => {
-        /* Se offline, retorna fallback */
-        return caches.match('/offline.html');
+// Fetch: Cache-first para estáticos, Network-first para dados, fallback offline seguro
+self.addEventListener('fetch', (e) => {
+  // Se for uma requisição de API ou dados, tenta a rede primeiro
+  if (e.request.url.includes('/api/') || e.request.url.includes('/data/')) {
+    e.respondWith(
+      fetch(e.request).catch(() => {
+        // Fallback seguro se estiver offline (evita erro 404 de offline.html inexistente)
+        return new Response(JSON.stringify({ error: 'Offline' }), {
+          headers: { 'Content-Type': 'application/json' }
+        });
       })
     );
-    return;
+  } else {
+    // Para arquivos estáticos: tenta o cache primeiro, se não tiver, vai para a rede
+    e.respondWith(
+      caches.match(e.request).then((res) => {
+        return res || fetch(e.request);
+      })
+    );
   }
+});
 
-  /* Para estáticos: cache primeiro, rede como fallback */
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return cached || fetch(event.request);
+// Push notifications (simulado para MVP)
+self.addEventListener('push', (e) => {
+  const data = e.data ? e.data.json() : { title: 'CrecheNow', body: 'Nova mensagem' };
+  e.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      // Caminho relativo para o ícone
+      icon: './assets/img/icons/icon-192x192.png'
     })
   );
 });
 
-/* ----------------------------------------------------------
-   PUSH: recebe notificações do servidor (preparado para futuro)
-   ---------------------------------------------------------- */
-self.addEventListener('push', (event) => {
-  const data = event.data ? event.data.json() : {};
-  event.waitUntil(
-    self.registration.showNotification(data.title || 'CrecheNow', {
-      body: data.body || 'Nova mensagem',
-      icon: '/assets/img/icons/icon-192x192.png',
-      badge: '/assets/img/icons/icon-192x192.png'
-    })
-  );
-});
-
-/* ----------------------------------------------------------
-   NOTIFICATION CLICK: abre a página correta ao tocar na notificação
-   ---------------------------------------------------------- */
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  event.waitUntil(
-    clients.openWindow('/pages/dashboard-parent.html')
+// Ao clicar na notificação, abre o dashboard correto
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  e.waitUntil(
+    // Caminho relativo para o dashboard
+    clients.openWindow('./pages/dashboard-parent.html')
   );
 });
