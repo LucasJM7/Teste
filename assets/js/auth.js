@@ -1,9 +1,10 @@
 /* ============================================================
-   MODULO DE AUTENTICACAO - CrecheNow
-   Caminhos relativos para GitHub Pages
+   MÓDULO DE AUTENTICAÇÃO - CrecheNow
+   Caminhos RELATIVOS para funcionar no GitHub Pages
    ============================================================ */
 
 const CrecheNowAuth = (() => {
+  // Banco de dados simulado de usuários
   const MOCK_USERS = [
     { email: 'pai@email.com', senha: '123456', name: 'Carlos Silva', role: 'parent', class: null },
     { email: 'mae@email.com', senha: '123456', name: 'Ana Souza', role: 'parent', class: null },
@@ -13,6 +14,7 @@ const CrecheNowAuth = (() => {
     { email: 'secretaria@email.com', senha: '123456', name: 'Secretaria', role: 'secretary', class: null }
   ];
 
+  // ⚠️ CAMINHOS RELATIVOS (./) - Essencial para GitHub Pages
   const ROLE_ROUTES = {
     parent: './pages/dashboard-parent.html',
     teacher: './pages/dashboard-teacher.html',
@@ -27,39 +29,45 @@ const CrecheNowAuth = (() => {
 
   return {
     init: () => {
-      console.log('[Auth] Modulo inicializado.');
+      console.log('[Auth] Módulo inicializado.');
     },
 
     checkSession: () => {
       const sessao = CrecheNowStorage.get('session');
       const paginaAtual = window.location.pathname;
 
-      if (paginaAtual.includes('index.html') || paginaAtual.endsWith('/')) {
+      // Se estiver na página de login e já tiver sessão, redireciona
+      if (paginaAtual.includes('index.html') || paginaAtual === '/' || paginaAtual.endsWith('/Teste/')) {
         if (sessao && ROLE_ROUTES[sessao.role]) {
           window.location.href = ROLE_ROUTES[sessao.role];
         }
         return;
       }
 
+      // Se estiver em dashboard e NÃO tiver sessão, volta pro login
       if (!sessao && paginaAtual.includes('dashboard')) {
         window.location.href = './index.html';
         return;
       }
 
-      if (sessao && ROLE_ROUTES[sessao.role] && !paginaAtual.includes(ROLE_ROUTES[sessao.role].split('/').pop())) {
-        window.location.href = ROLE_ROUTES[sessao.role];
+      // Se tiver sessão mas tentar acessar dashboard errado
+      if (sessao && ROLE_ROUTES[sessao.role]) {
+        const rotaCorreta = ROLE_ROUTES[sessao.role].split('/').pop();
+        if (!paginaAtual.includes(rotaCorreta)) {
+          window.location.href = ROLE_ROUTES[sessao.role];
+        }
       }
     },
 
     login: (email, senha, lgpdConsent) => {
       if (!email || !validarEmail(email)) {
-        return { success: false, msg: 'E-mail invalido.' };
+        return { success: false, msg: 'E-mail inválido.' };
       }
       if (!senha || senha.length < 6) {
-        return { success: false, msg: 'Senha deve ter no minimo 6 caracteres.' };
+        return { success: false, msg: 'Senha deve ter no mínimo 6 caracteres.' };
       }
       if (!lgpdConsent) {
-        return { success: false, msg: 'Voce precisa concordar com a Politica de Privacidade.' };
+        return { success: false, msg: 'Você precisa concordar com a Política de Privacidade.' };
       }
 
       const usuario = buscarUsuario(email, senha);
@@ -79,6 +87,7 @@ const CrecheNowAuth = (() => {
       return { success: true, session: sessao };
     },
 
+    // ⚠️ LOGOUT CORRIGIDO - usa ./index.html (relativo)
     logout: () => {
       CrecheNowStorage.set('session', null);
       window.location.href = './index.html';
