@@ -1,1 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#2a66b4" />
 
+  <title>CrecheNow - Painel dos Pais</title>
+
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/png" href="/assets/img/icons/icon-192x192.png" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+</head>
+<body>
+  <!-- ======================================================
+       HEADER: Barra superior com identidade e ações do usuário
+       ====================================================== -->
+  <header class="navbar navbar-expand-lg bg-primary text-white shadow-sm">
+    <div class="container-fluid">
+      <!-- Logo / Nome do sistema -->
+      <a class="navbar-brand fw-bold text-white" href="#">
+        CRECHENOW
+      </a>
+
+      <!-- Área direita: nome do usuário, mensagens e logout -->
+      <div class="d-flex align-items-center gap-3">
+        <!-- Exibe o nome do responsável logado (preenchido via JS) -->
+        <span class="text-white small" id="userNameDisplay">Responsável</span>
+
+        <!-- Botão que abre a caixa de mensagens recebidas -->
+        <button
+          class="btn btn-light position-relative"
+          id="openInboxModalBtn"
+          aria-label="Abrir mensagens"
+        >
+          Mensagens
+          <!-- Badge com número de mensagens não lidas (oculto por padrão) -->
+          <span
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+            id="inboxBadge"
+          >0</span>
+        </button>
+
+        <!-- Botão de logout -->
+        <button class="btn btn-outline-light btn-sm" id="logoutBtn">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================
+       MAIN: Conteúdo principal do dashboard
+       ====================================================== -->
+  <main class="dashboard-main">
+    <div class="dashboard-row">
+
+      <!-- --------------------------------------------------
+           COLUNA LATERAL ESQUERDA: Agenda e Cardápio
+           (placeholders - serão populados pelo JS)
+           -------------------------------------------------- -->
+      <aside class="side-column">
+        <!-- Card da Agenda Semanal -->
+        <section class="card shadow-sm" aria-labelledby="agendaTitle">
+          <div class="card-header bg-primary text-white">
+            <h2 class="h6 mb-0" id="agendaTitle">Agenda Semanal</h2>
+          </div>
+          <div class="card-body" id="agendaContainer">
+            <!-- Conteúdo será renderizado pelo JS -->
+            <p class="text-muted text-center">Carregando agenda...</p>
+          </div>
+        </section>
+
+        <!-- Card do Cardápio Semanal -->
+        <section class="card shadow-sm" aria-labelledby="cardapioTitle">
+          <div class="card-header bg-success text-white">
+            <h2 class="h6 mb-0" id="cardapioTitle">Cardápio Semanal</h2>
+          </div>
+          <div class="card-body" id="cardapioContainer">
+            <!-- Conteúdo será renderizado pelo JS -->
+            <p class="text-muted text-center">Carregando cardápio...</p>
+          </div>
+        </section>
+      </aside>
+
+      <!-- --------------------------------------------------
+           COLUNA CENTRAL: Comunicados e Rotina
+           -------------------------------------------------- -->
+      <section class="center-column">
+        <!-- Card de Comunicados (carrossel) -->
+        <article class="card shadow-sm" aria-labelledby="comunicadosTitle">
+          <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+            <h2 class="h6 mb-0" id="comunicadosTitle">Comunicados</h2>
+
+            <!-- Filtros por tipo de comunicado -->
+            <div class="btn-group btn-group-sm" role="group" aria-label="Filtrar comunicados">
+              <button class="btn btn-outline-dark active" data-filter="todos">Todos</button>
+              <button class="btn btn-outline-dark" data-filter="saude">Saúde</button>
+              <button class="btn btn-outline-dark" data-filter="pedagogico">Pedagógico</button>
+            </div>
+          </div>
+
+          <div class="card-body p-0">
+            <!-- Carrossel Bootstrap para navegar entre comunicados -->
+            <div
+              id="notificationsCarousel"
+              class="carousel slide notifications-carousel-wrapper"
+              data-bs-ride="carousel"
+            >
+              <div class="carousel-inner" id="notificationsFeed">
+                <!-- Itens do carrossel serão injetados pelo JS -->
+                <p class="text-muted text-center p-4">Carregando comunicados...</p>
+              </div>
+
+              <!-- Botões de navegação do carrossel -->
+              <button class="carousel-control-prev" type="button" data-bs-target="#notificationsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#notificationsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Próximo</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card da Rotina de Hoje -->
+        <article class="card shadow-sm routine-card-fixed" aria-labelledby="rotinaTitle">
+          <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h2 class="h6 mb-0" id="rotinaTitle">Rotina de Hoje</h2>
+            <!-- Botão que alterna a exibição do histórico -->
+            <button class="btn btn-sm btn-light" id="toggleRoutineHistory">Ver Histórico</button>
+          </div>
+
+          <!-- Área principal da rotina (preenchida pelo JS) -->
+          <div class="card-body" id="routineContainer">
+            <p class="text-muted text-center">Carregando...</p>
+          </div>
+
+          <!-- Área do histórico (oculta por padrão, exibida ao clicar no botão) -->
+          <div id="routine-history" class="card-body d-none border-top">
+            <h3 class="h6 mb-2">Histórico</h3>
+            <div id="routineHistoryList"></div>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <!-- ======================================================
+       BOTÃO FLUTUANTE: Abrir modal de envio de recado
+       ====================================================== -->
+  <div class="position-fixed bottom-0 end-0 p-3 d-flex flex-column gap-2" style="z-index: 1040;">
+    <button class="btn btn-primary shadow" id="openMsgModalBtn">
+      Enviar Recado
+    </button>
+  </div>
+
+  <!-- ======================================================
+       MODAL: Enviar Recado para a Creche
+       ====================================================== -->
+  <div class="modal-overlay" id="msgModal" role="dialog" aria-modal="true" aria-labelledby="msgModalTitle">
+    <div class="modal-box">
+      <!-- Botão de fechar modal -->
+      <button class="modal-close" data-close-modal aria-label="Fechar">×</button>
+
+      <h3 class="h4 mb-3" id="msgModalTitle">Enviar Recado para a Creche</h3>
+
+      <form id="parentMsgForm" novalidate>
+        <!-- Campo readonly com o nome da criança (preenchido pelo JS) -->
+        <div class="mb-3">
+          <label for="childName" class="form-label">Nome da Criança</label>
+          <input type="text" class="form-control" id="childName" readonly />
+        </div>
+
+        <!-- Campo de mensagem -->
+        <div class="mb-3">
+          <label for="parentMessage" class="form-label">Mensagem</label>
+          <textarea class="form-control" id="parentMessage" rows="4" required></textarea>
+          <div class="invalid-feedback">Escreva uma mensagem.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Enviar Recado</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       MODAL: Caixa de Mensagens (Recebidas e Enviadas)
+       ====================================================== -->
+  <div class="modal-overlay" id="inboxModal" role="dialog" aria-modal="true" aria-labelledby="inboxModalTitle">
+    <div class="modal-box">
+      <button class="modal-close" data-close-modal aria-label="Fechar">×</button>
+
+      <h3 class="h4 mb-3" id="inboxModalTitle">Minhas Mensagens</h3>
+
+      <!-- Abas para alternar entre recebidas e enviadas -->
+      <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item">
+          <button class="nav-link active" data-inbox-tab="received" type="button">Recebidas</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" data-inbox-tab="sent" type="button">Enviadas</button>
+        </li>
+      </ul>
+
+      <!-- Conteúdo das mensagens (preenchido pelo JS) -->
+      <div id="inbox-content" class="overflow-auto" style="max-height: 50vh;"></div>
+    </div>
+  </div>
+
+  <!-- Container de toasts -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/notifications.js"></script>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>
