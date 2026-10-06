@@ -1,1 +1,49 @@
+{
+  /* Nome completo do aplicativo, exibido na tela de instalação */
+  "name": "CrecheNow - Agenda Eletrônica",
 
+  /* Nome curto, usado na tela inicial do celular (ícone) */
+  "short_name": "CrecheNow",
+
+  /* Descrição que aparece nas lojas e no diálogo de instalação */
+  "description": "Comunicação segura entre creches e responsáveis.",
+
+  /* URL inicial que abre quando o usuário toca no ícone */
+  "start_url": "/",
+
+  /* Escopo: define em quais URLs o PWA funciona como app */
+  "scope": "/",
+
+  /* Modo de exibição: standalone remove a barra do navegador */
+  "display": "standalone",
+
+  /* Cor de fundo durante o carregamento (splash screen) */
+  "background_color": "#f8f9fa",
+
+  /* Cor da barra de status do celular e da interface */
+  "theme_color": "#2a66b4",
+
+  /* Orientação preferida da tela */
+  "orientation": "portrait-primary",
+
+  /* Lista de ícones em diferentes tamanhos */
+  "icons": [
+    {
+      "src": "assets/img/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/img/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+
+  /* Categorias para classificação em lojas */
+  "categories": ["education", "productivity"],
+
+  /* Idioma padrão do aplicativo */
+  "lang": "pt-BR"
+}
