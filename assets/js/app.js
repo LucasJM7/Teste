@@ -332,10 +332,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Registro do Service Worker (PWA)
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(() => console.log('Service Worker registrado com sucesso.'))
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(() => console.log('Service Worker registrado com sucesso'))
       .catch(err => console.error('Falha ao registrar Service Worker:', err));
-  }
+}
 
   // Renderização inicial dos dashboards (se já estiver logado)
   if (window.location.pathname.includes('dashboard')) {
